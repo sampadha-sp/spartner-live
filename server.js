@@ -1194,6 +1194,47 @@ const server =
     try {
 
                 // ======================================================
+                // SERVE FRONTEND (SINGLE APP DEPLOYMENT)
+                // ======================================================
+                // The SPARTNER app is deployed as one Render Web Service.
+                // Serve files from /public and fall back to index.html for SPA routes.
+                if (req.method === 'GET' && !req.url.startsWith('/api/')) {
+                  const requestedPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+                  const publicRoot = path.join(__dirname, 'public');
+                  const relativePath = requestedPath === '/' ? 'index.html' : requestedPath.replace(/^\/+/, '');
+                  const safePath = path.normalize(relativePath);
+                  const candidate = path.join(publicRoot, safePath);
+                  const isInsidePublic = candidate === publicRoot || candidate.startsWith(publicRoot + path.sep);
+                  const filePath = isInsidePublic && fs.existsSync(candidate) && fs.statSync(candidate).isFile()
+                    ? candidate
+                    : path.join(publicRoot, 'index.html');
+
+                  const ext = path.extname(filePath).toLowerCase();
+                  const contentTypes = {
+                    '.html': 'text/html; charset=utf-8',
+                    '.js': 'application/javascript; charset=utf-8',
+                    '.css': 'text/css; charset=utf-8',
+                    '.json': 'application/json; charset=utf-8',
+                    '.png': 'image/png',
+                    '.jpg': 'image/jpeg',
+                    '.jpeg': 'image/jpeg',
+                    '.svg': 'image/svg+xml',
+                    '.ico': 'image/x-icon',
+                    '.webp': 'image/webp',
+                    '.woff': 'font/woff',
+                    '.woff2': 'font/woff2'
+                  };
+
+                  const body = fs.readFileSync(filePath);
+                  res.writeHead(200, {
+                    'Content-Type': contentTypes[ext] || 'application/octet-stream',
+                    'Cache-Control': 'no-cache'
+                  });
+                  res.end(body);
+                  return;
+                }
+
+                // ======================================================
                 // ADMIN RETURN FROM INVESTOR IMPERSONATION (TOP-LEVEL)
                 // ======================================================
                 if (req.url === '/api/admin/return' && req.method === 'POST') {
