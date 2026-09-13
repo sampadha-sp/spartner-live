@@ -1,0 +1,2640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SPARTNER Investor Portal</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    /* =========================================================
+       COMMON
+       ========================================================= */
+
+    .muted {
+      color: #718096;
+    }
+
+    .error {
+      color: #c53030;
+    }
+
+    .success {
+      color: #16803c;
+    }
+
+    .panel {
+      background: #ffffff;
+      border: 1px solid #e6ebf2;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow:
+        0 8px 30px rgba(20, 40, 80, 0.06);
+    }
+
+    .btn {
+      border: 1px solid #d8dee8;
+      background: #ffffff;
+      color: #24324a;
+      padding: 11px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: .2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      background: #173f8a;
+      color: #ffffff;
+      border-color: #173f8a;
+    }
+
+    .btn.danger {
+      background: #c53030;
+      color: #ffffff;
+      border-color: #c53030;
+    }
+
+    .btn.secondary {
+      background: #eef3fb;
+      color: #173f8a;
+      border-color: #d8e2f2;
+    }
+
+    .btn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: 650;
+      color: #24324a;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #d8dee8;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #172033;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #4776c7;
+      box-shadow: 0 0 0 3px rgba(71, 118, 199, .12);
+    }
+
+    textarea {
+      width: 100%;
+    }
+
+    /* =========================================================
+       LOGIN
+       ========================================================= */
+
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+      background:
+        radial-gradient(
+          circle at top left,
+          #dce9ff,
+          transparent 40%
+        ),
+        #f4f7fb;
+    }
+
+    .login-card {
+      width: min(430px, 100%);
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 35px;
+      box-shadow:
+        0 20px 70px rgba(20, 40, 80, .12);
+      border: 1px solid #e7ebf2;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8f0ff;
+      color: #173f8a;
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 23px;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: #718096;
+      font-size: 13px;
+    }
+
+    .form-group {
+      margin-bottom: 17px;
+    }
+
+    .login-card .btn {
+      width: 100%;
+      margin-top: 5px;
+    }
+
+    #loginError {
+      min-height: 24px;
+      margin-top: 14px;
+      color: #c53030;
+      font-size: 14px;
+    }
+
+    /* =========================================================
+       PORTAL LAYOUT
+       ========================================================= */
+
+    .portal {
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 260px;
+      min-height: 100vh;
+      box-sizing: border-box;
+      background: #000000;
+      color: #ffffff;
+      padding: 24px 16px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 20;
+    
+
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+    }
+
+    .sidebar-brand strong {
+      display: block;
+      font-size: 17px;
+    }
+
+    .sidebar-brand small {
+      color: #bdcce8;
+    }
+
+    .side-user {
+      padding: 15px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.08);
+      margin-bottom: 20px;
+    }
+
+    .side-user strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .side-user small {
+      color: #bdcce8;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .nav-item {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #dbe6fa;
+      padding: 12px 13px;
+      border-radius: 10px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: rgba(255,255,255,.13);
+      color: #ffffff;
+    }
+
+    .sidebar-bottom {
+      position: static;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.18);
+      flex-shrink: 0;
+    }
+
+    .logout-btn {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: #ffffff;
+      padding: 11px;
+      border-radius: 10px;
+    }
+
+    .main {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 76px;
+      background: #ffffff;
+      border-bottom: 1px solid #e7ebf2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-title {
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .top-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 39px;
+      height: 39px;
+      border-radius: 50%;
+      background: #e8f0ff;
+      color: #173f8a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+
+    .content {
+      padding: 30px;
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+
+    .welcome {
+      background:
+        linear-gradient(
+          135deg,
+          #173f8a,
+          #2d5eaa
+        );
+      color: #ffffff;
+      border-radius: 22px;
+      padding: 28px;
+      margin-bottom: 22px;
+    }
+
+    .welcome h1 {
+      margin: 0 0 7px;
+      font-size: 28px;
+    }
+
+    .welcome p {
+      margin: 0;
+      color: #dce8ff;
+    }
+
+    .welcome-meta {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      font-size: 13px;
+      color: #dce8ff;
+    }
+
+    /* =========================================================
+       STATS
+       ========================================================= */
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(210px, 1fr)
+        );
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      background: #ffffff;
+      border: 1px solid #e6ebf2;
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .stat .label {
+      color: #718096;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat .value {
+      color: #173f8a;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    /* =========================================================
+       QUICK ACTIONS
+       ========================================================= */
+
+    .quick-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    /* =========================================================
+       PROFILE
+       ========================================================= */
+
+    .section-title {
+      margin: 0 0 6px;
+      font-size: 21px;
+    }
+
+    .section-subtitle {
+      margin: 0 0 20px;
+      color: #718096;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(230px, 1fr)
+        );
+      gap: 16px;
+    }
+
+    #profileMsg {
+      min-height: 24px;
+      margin-top: 15px;
+    }
+
+    /* =========================================================
+       TRANSACTIONS
+       ========================================================= */
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    th,
+    td {
+      padding: 13px 12px;
+      border-bottom: 1px solid #edf0f5;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      color: #526078;
+      background: #f8fafc;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #edf2f7;
+    }
+
+    .badge.pending {
+      background: #fff4cc;
+      color: #946200;
+    }
+
+    .badge.verified {
+      background: #dff7e8;
+      color: #176b39;
+    }
+
+    .badge.rejected {
+      background: #ffe1e1;
+      color: #a52d2d;
+    }
+
+    .mini {
+      border: 1px solid #d7dfeb;
+      background: #ffffff;
+      color: #24324a;
+      padding: 6px 9px;
+      border-radius: 7px;
+      font-size: 12px;
+      margin-right: 5px;
+    }
+
+    .mini:hover {
+      background: #f1f5fa;
+    }
+
+    /* =========================================================
+       MODALS
+       ========================================================= */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(10, 25, 50, .55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-card {
+      width: min(560px, 100%);
+      max-height: 92vh;
+      overflow-y: auto;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 26px;
+      box-shadow:
+        0 25px 80px rgba(0,0,0,.25);
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    .modal-head h2 {
+      margin: 0 0 5px;
+      font-size: 22px;
+    }
+
+    .modal-head p {
+      margin: 0;
+      color: #718096;
+      font-size: 14px;
+    }
+
+    .close {
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 50%;
+      background: #edf2f7;
+      color: #26364f;
+      font-size: 23px;
+      line-height: 1;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .message {
+      min-height: 24px;
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* =========================================================
+       DEPOSIT
+       ========================================================= */
+
+    .upload-box {
+      border: 2px dashed #ccd6e5;
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      background: #fafcff;
+    }
+
+    .upload-box input {
+      border: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+    #fileName {
+      margin-top: 8px;
+      color: #526078;
+      font-size: 13px;
+    }
+
+    /* =========================================================
+       WITHDRAWAL
+       ========================================================= */
+
+    .withdrawal-bank-info {
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #f6f9fe;
+      border: 1px solid #e0e8f5;
+    }
+
+    .withdrawal-bank-info .bank-name {
+      font-weight: 800;
+      color: #173f8a;
+      margin-bottom: 9px;
+    }
+
+    .withdrawal-bank-info p {
+      margin: 6px 0;
+      font-size: 14px;
+    }
+
+    .withdrawal-note {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #fff8e5;
+      color: #755800;
+      font-size: 13px;
+      margin-top: 16px;
+    }
+
+    /* =========================================================
+       PROOF
+       ========================================================= */
+
+    .proof-card {
+      width: min(700px, 100%);
+    }
+
+    .proof-image-wrap {
+      margin-top: 15px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f2f4f8;
+      min-height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #proofImage {
+      max-width: 100%;
+      max-height: 65vh;
+      display: block;
+    }
+
+    /* =========================================================
+       INVESTMENT
+       ========================================================= */
+
+    .investment-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(220px, 1fr)
+        );
+      gap: 16px;
+    }
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    /* =========================================================
+       MOBILE SIDEBAR DRAWER
+       ========================================================= */
+    .mobile-menu-btn {
+      display: none;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font-size: 24px;
+      line-height: 1;
+      padding: 8px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .mobile-menu-btn:hover {
+      background: rgba(0,0,0,.06);
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 19;
+    }
+
+    .mobile-close-btn {
+      display: none;
+      margin-left: auto;
+      border: 0;
+      background: rgba(255,255,255,.10);
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .mobile-menu-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .sidebar-overlay.open {
+        display: block;
+      }
+
+      .sidebar {
+        width: 270px;
+        padding: 18px 14px;
+        transform: translateX(-105%);
+        transition: transform .22s ease;
+        box-shadow: 8px 0 24px rgba(0,0,0,.22);
+      }
+
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+
+      .sidebar-brand strong,
+      .sidebar-brand small,
+      .side-user,
+      .nav-item span:last-child,
+      .logout-btn span {
+        display: block;
+      }
+
+      .sidebar-brand {
+        justify-content: flex-start;
+      }
+
+      .nav-item {
+        justify-content: flex-start;
+      }
+
+      .mobile-close-btn {
+        display: block;
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 12px;
+      }
+
+      .topbar-title {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .content {
+        padding: 14px;
+      }
+
+      .top-user-name {
+        display: none;
+      }
+
+      .modal {
+        padding: 10px;
+      }
+
+      .modal-card {
+        padding: 20px;
+      }
+
+      .welcome {
+        padding: 22px;
+      }
+
+      .welcome h1 {
+        font-size: 23px;
+      }
+    }
+
+    /* =========================================================
+       FINAL WORKFLOW UI
+       ========================================================= */
+    .compact-stats {
+      margin: 18px 0;
+    }
+
+    .deposit-withdraw-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .inner-panel {
+      box-shadow: none;
+      background: #fbfcff;
+    }
+
+    .inner-panel h3 {
+      margin: 0 0 14px;
+      color: #173f8a;
+    }
+
+    .section-head-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .performance-form {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(150px, 1fr));
+      gap: 14px;
+      align-items: end;
+    }
+
+    .admin-create-investor {
+      margin: 18px 0;
+    }
+
+    .excel-btn {
+      background: #eaf7ee;
+      border-color: #b8dfc4;
+      color: #16743a;
+    }
+
+    .danger-mini {
+      background: #fff0f0 !important;
+      color: #b42318 !important;
+      border-color: #f3c4c4 !important;
+    }
+
+    .success-text {
+      color: #16803c;
+      font-weight: 700;
+    }
+
+    .loss-text {
+      color: #c53030;
+      font-weight: 700;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .status-approved { color:#16803c; font-weight:800; }
+    .status-pending { color:#946200; font-weight:800; }
+    .status-rejected { color:#b42318; font-weight:800; }
+    .admin-detail-row td { background:#f8fafc; }
+    .admin-detail-table { min-width:900px; }
+
+    @media (max-width: 900px) {
+      .deposit-withdraw-grid,
+      .performance-form {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    
+</style>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+  <!-- =========================================================
+       LOGIN VIEW
+       ========================================================= -->
+
+  <div id="loginView" class="login-page">
+
+    <div class="login-card">
+
+      <div class="brand">
+        <div class="brand-icon">₹</div>
+
+        <div>
+          <h1>SPARTNER</h1>
+          <p>Secure Login</p>
+        </div>
+      </div>
+
+      <form id="loginForm">
+
+        <div class="form-group">
+          <label for="email">
+            Login ID / Email
+          </label>
+
+          <input
+            type="text"
+            id="email"
+            placeholder="Enter Login ID or Email"
+            autocomplete="username"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">
+            Password
+          </label>
+
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <div style="text-align:right; margin-bottom:12px;">
+          <a href="#" id="forgotPasswordLink">Forgot Password?</a>
+        </div>
+
+        <button
+          type="submit"
+          class="btn primary"
+        >
+          Login
+        </button>
+
+        <div id="loginError"></div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================================
+       PORTAL VIEW
+       ========================================================= -->
+
+  <div
+    id="portalView"
+    class="portal"
+    hidden
+  >
+
+    <!-- =======================================================
+         SIDEBAR
+         ======================================================= -->
+
+    <aside class="sidebar">
+
+      <div class="sidebar-brand">
+
+        <div class="sidebar-brand-icon">
+          ₹
+        </div>
+
+        <div>
+          <strong>SPARTNER</strong>
+          <small>Investor Portal</small>
+        </div>
+
+        <button type="button" id="mobileSidebarClose" class="mobile-close-btn" aria-label="Close menu">×</button>
+
+      </div>
+
+
+      <div class="side-user">
+
+        <strong id="sideUserName">
+          Investor
+        </strong>
+
+        <small id="sideUserRole">
+          investor
+        </small>
+
+      </div>
+
+
+      <nav class="nav">
+
+        <button type="button" class="nav-item active" data-section="dashboard">
+          <span>🏠</span><span>Dashboard</span>
+        </button>
+
+        <button type="button" class="nav-item admin-create-nav" data-section="investment" hidden>
+          <span>👤+</span><span>Create Investor</span>
+        </button>
+
+        <button type="button" class="nav-item admin-access-nav" data-section="investor-access" hidden>
+          <span>🔐</span><span>Investor Login Access</span>
+        </button>
+
+        <button type="button" class="nav-item" data-section="deposit">
+          <span>💰</span><span>Deposit</span>
+        </button>
+
+        <button type="button" class="nav-item" data-section="withdraw">
+          <span>💸</span><span>Withdraw</span>
+        </button>
+
+        <button type="button" class="nav-item" data-section="transactions">
+          <span>💳</span><span>Transactions</span>
+        </button>
+
+        <button type="button" class="nav-item" data-section="bank">
+          <span>🏦</span><span>Bank Details</span>
+        </button>
+
+        <button type="button" class="nav-item" data-section="cashback">
+          <span>💵</span><span>Cash Back</span>
+        </button>
+<button type="button" class="nav-item" data-section="level-incomes">
+          <span>📊</span><span>Level Incomes</span>
+        </button>
+
+        <button type="button" class="nav-item investor-only-nav" data-section="my-downlines">
+          <span>🌳</span><span>My Downlines</span>
+        </button>
+
+        <button type="button" class="nav-item admin-access-nav" data-section="network-overview" hidden>
+          <span>🕸️</span><span>Network Overview</span>
+        </button>
+
+        <button type="button" class="nav-item" data-section="rules">
+          <span>📜</span><span>Investor Rules</span>
+        </button>
+
+        <button type="button" class="nav-item" data-section="roi-history">
+          <span>📈</span><span>ROI History</span>
+        </button>
+
+        <button type="button" class="nav-item" data-section="profile">
+          <span>👤</span><span>Profile</span>
+        </button>
+
+      </nav>
+
+
+      <div class="sidebar-bottom">
+
+        <button type="button" id="returnToAdminBtn" class="logout-btn" hidden>
+          <span>↩ Return to Admin</span>
+        </button>
+
+        <button
+          type="button"
+          id="logout"
+          class="logout-btn"
+        >
+          <span>Logout</span>
+        </button>
+
+      </div>
+
+    </aside>
+
+    <div id="sidebarOverlay" class="sidebar-overlay" aria-hidden="true"></div>
+
+
+    <!-- =======================================================
+         MAIN
+         ======================================================= -->
+
+    <main class="main">
+
+      <header class="topbar">
+
+        <button type="button" id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">☰</button>
+
+        <div
+          id="topSectionLabel"
+          class="topbar-title"
+        >
+          Dashboard
+        </div>
+
+        <div class="top-user">
+
+          <span
+            id="topUserName"
+            class="top-user-name"
+          >
+            Investor
+          </span>
+
+          <div
+            id="topAvatar"
+            class="avatar"
+          >
+            I
+          </div>
+
+        </div>
+
+      </header>
+
+
+      <div class="content">
+
+
+        <!-- ===================================================
+             DASHBOARD
+             =================================================== -->
+
+        <section
+          id="section-dashboard"
+          class="page-section active-section"
+        >
+
+          <div class="welcome">
+
+            <h1>
+              Welcome,
+              <span id="name">Investor</span>
+            </h1>
+
+            <p>
+              Manage your investment, withdrawals and transactions.
+            </p>
+
+            <div class="welcome-meta">
+
+              <span>
+                Role:
+                <strong id="roleLabel">
+                  INVESTOR
+                </strong>
+              </span>
+
+              <span>
+                User ID:
+                <strong id="displayUserId">
+                  —
+                </strong>
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div id="investorTierPanel" class="investor-tier-panel"></div>
+
+          <div id="investorTargetPanel" class="investor-target-panel" hidden></div>
+
+          <div
+            id="investorStats"
+            class="stats-grid"
+          ></div>
+
+
+          <div
+            id="adminStats"
+            class="stats-grid"
+            hidden
+          ></div>
+
+          <div id="adminDashboardBody" class="admin-dashboard-body" hidden>
+            <div class="admin-dashboard-grid">
+              <div class="dashboard-panel dashboard-chart-panel">
+                <div class="dashboard-panel-head">
+                  <div><h3>Deposits vs Withdrawals</h3><span>All Time</span></div>
+                </div>
+                <div id="adminDepositWithdrawChart" class="bar-chart"></div>
+              </div>
+
+              <div class="dashboard-panel dashboard-chart-panel">
+                <div class="dashboard-panel-head">
+                  <div><h3>ROI Overview</h3><span>Current / Available</span></div>
+                </div>
+                <div id="adminRoiOverview" class="roi-overview"></div>
+              </div>
+
+            </div>
+
+            <div id="adminDashboardSecondary" class="admin-mini-grid"></div>
+            <div class="admin-dashboard-grid lower">
+            </div>
+          </div>
+
+
+          <div class="quick-actions">
+
+            <button
+              type="button"
+              id="depositBtn"
+              class="btn primary"
+            >
+              + Deposit
+            </button>
+
+            <button
+              type="button"
+              id="withdrawBtn"
+              class="btn secondary"
+            >
+              ₹ Withdraw
+            </button>
+
+          </div>
+
+
+        </section>
+
+
+        <!-- ===================================================
+             ADMIN INVESTOR LOGIN ACCESS
+             =================================================== -->
+        <section id="section-investor-access" class="page-section" hidden>
+          <div class="panel">
+            <div class="section-head-row">
+              <div>
+                <h2 class="section-title">Investor Login Access</h2>
+                <p class="section-subtitle">Select an investor to open their full portal. Investor passwords are never shown or stored here.</p>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+              <input id="adminInvestorSearch" type="search" placeholder="Search Investor ID, name or email" style="max-width:420px;">
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Investor ID</th><th>Name</th><th>Email</th><th>Status</th><th>Investment</th><th>Current Balance</th><th>Action</th></tr></thead>
+                <tbody id="adminInvestorAccessBody"><tr><td colspan="7">Loading investors...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================
+             ADMIN NETWORK OVERVIEW
+             =================================================== -->
+        <section id="section-network-overview" class="page-section" hidden>
+          <div class="panel">
+            <div class="section-head-row">
+              <div>
+                <h2 class="section-title">Network Overview</h2>
+                <p class="section-subtitle">Admin view of the investor network, sponsor relationships, deposits, balances, ROI and Level Income.</p>
+              </div>
+              <button type="button" class="btn secondary" id="refreshAdminNetworkBtn">Refresh</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Investor ID</th><th>Name</th><th>Sponsor</th><th>Total Deposit</th><th>Current Balance</th><th>Today's ROI</th><th>Level Income</th><th>Direct IDs</th><th>Status</th></tr></thead>
+                <tbody id="adminNetworkBody"><tr><td colspan="9">Loading network...</td></tr></tbody>
+              </table>
+            </div>
+            <div style="margin-top:22px;">
+              <h3>Network Tree</h3>
+              <p class="section-subtitle">Maximum 5 direct IDs per sponsor and up to 5 levels are shown.</p>
+              <div id="adminNetworkTree" class="admin-network-tree"><div class="downline-empty">Loading network...</div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================
+             INVESTMENT
+             =================================================== -->
+
+        <section
+          id="section-investment"
+          class="page-section"
+          hidden
+        >
+
+          <div id="investorInvestmentView" class="panel">
+
+            <h2 class="section-title">
+              Investment
+            </h2>
+
+            <p class="section-subtitle">
+              Clear deposit and withdrawal history.
+            </p>
+
+            <div class="stats-grid compact-stats">
+
+              <div class="stat">
+                <div class="label">Total Deposit</div>
+                <div id="investmentTotalDeposit" class="value">₹0</div>
+              </div>
+
+              <div class="stat">
+                <div class="label">Total Withdraw</div>
+                <div id="investmentTotalWithdraw" class="value">₹0</div>
+              </div>
+
+              <div class="stat">
+                <div class="label">Current Balance</div>
+                <div id="investmentCurrentBalance" class="value">₹0</div>
+              </div>
+
+            </div>
+
+            <div style="margin:0 0 16px;display:flex;justify-content:flex-end;">
+              <button type="button" id="downloadInvestorWithdrawalStatementBtn" class="btn secondary">
+                📗 Download Withdrawal Statement
+              </button>
+            </div>
+
+            <div class="deposit-withdraw-grid">
+
+              <div class="panel inner-panel">
+
+                <h3>Deposits</h3>
+
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="investorDepositBody">
+                      <tr>
+                        <td colspan="3">No deposits yet.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+
+              <div class="panel inner-panel">
+
+                <h3>Withdrawals</h3>
+
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="investorWithdrawBody">
+                      <tr>
+                        <td colspan="3">No withdrawals yet.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div id="adminInvestmentView" hidden>
+
+            <div class="panel">
+
+              <div class="section-head-row">
+
+                <div>
+                  <h2 class="section-title">
+                    Investment
+                  </h2>
+
+                  <p class="section-subtitle">
+                    Investor-wise deposits, withdrawals and current balances.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  id="refreshAdminInvestorsBtn"
+                  class="btn secondary"
+                >
+                  Refresh
+                </button>
+
+                <button
+                  type="button"
+                  id="downloadAdminWithdrawalStatementBtn"
+                  class="btn secondary"
+                >
+                  📗 All Withdrawal Statement
+                </button>
+
+              </div>
+
+
+              <div class="panel inner-panel admin-create-investor">
+
+                <h3>
+                  Create Investor ID
+                </h3>
+
+                <p class="section-subtitle">
+                  Admin creates and approves the investor login.
+                </p>
+
+                <form
+                  id="createInvestorForm"
+                  class="profile-grid"
+                >
+
+                  <div class="form-group">
+                    <label>Investor ID</label>
+                    <div style="display:flex;gap:8px;align-items:center">
+                      <input
+                        id="newInvestorId"
+                        placeholder="INV001"
+                        required
+                      >
+                      <button type="button" class="btn secondary" id="generateInvestorIdBtn" style="white-space:nowrap">Next ID</button>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Name</label>
+                    <input
+                      id="newInvestorName"
+                      required
+                    >
+                  </div>
+
+                  <div class="form-group">
+                    <label>Email</label>
+                    <input
+                      id="newInvestorEmail"
+                      type="email"
+                      required
+                    >
+                  </div>
+
+                  <div class="form-group">
+                    <label>Sponsor / Referrer User ID (optional)</label>
+                    <input id="newInvestorSponsorId" placeholder="INV001">
+                  </div>
+
+                  <div class="form-group">
+                    <label>Initial Password</label>
+                    <input
+                      id="newInvestorPassword"
+                      type="password"
+                      required
+                    >
+                  </div>
+
+                  <div
+                    class="form-group"
+                    style="align-self:end"
+                  >
+                    <button
+                      class="btn primary"
+                      type="submit"
+                    >
+                      Create &amp; Approve Investor
+                    </button>
+                  </div>
+
+                </form>
+
+                <div id="createInvestorMsg"></div>
+
+              </div>
+
+
+              <div class="table-wrap">
+
+                <table>
+
+                  <thead>
+
+                    <tr>
+                      <th>Investor ID</th>
+                      <th>Name</th>
+                      <th>Investment</th>
+                      <th>ROI</th>
+                      <th>Available to Withdraw</th>
+                      <th>Cash Back</th>
+                      <th>Level Income</th>
+                    </tr>
+
+                  </thead>
+
+                  <tbody id="adminInvestorBody">
+
+                    <tr>
+                      <td colspan="6">
+                        Loading investors...
+                      </td>
+                    </tr>
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+            </div>
+
+
+            <div
+              class="panel"
+              style="margin-top:18px"
+            >
+
+              <h2 class="section-title">
+                Profile Change Requests
+              </h2>
+
+              <p class="section-subtitle">
+                Investor changes require admin approval.
+              </p>
+
+              <div class="table-wrap">
+
+                <table>
+
+                  <thead>
+
+                    <tr>
+                      <th>Investor</th>
+                      <th>Changes</th>
+                      <th>Date</th>
+                      <th>Action</th>
+                    </tr>
+
+                  </thead>
+
+                  <tbody id="profileRequestBody">
+
+                    <tr>
+                      <td colspan="4">
+                        No pending requests.
+                      </td>
+                    </tr>
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        
+
+        
+
+        <!-- ===================================================
+             DEPOSIT
+             =================================================== -->
+        <section id="section-deposit" class="page-section" hidden>
+          <div class="panel">
+            <div class="section-head-row">
+              <div>
+                <h2 class="section-title">Deposit</h2>
+                <p class="section-subtitle">Minimum deposit ₹10,000.</p>
+              </div>
+              <button type="button" class="btn primary" id="openDepositPageBtn">+ Deposit</button>
+              <button type="button" class="btn secondary excel-btn" id="downloadDepositExcelBtn">📗 Excel</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Deposit Amount</th><th>Date</th><th>Time</th><th>Status</th><th>Proof</th></tr></thead>
+                <tbody id="depositPageBody"><tr><td colspan="5">No deposits yet.</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================
+             WITHDRAW
+             =================================================== -->
+        <section id="section-withdraw" class="page-section" hidden>
+          <div class="panel">
+            <div class="section-head-row">
+              <div>
+                <h2 class="section-title">Withdraw</h2>
+                <p class="section-subtitle">Submit and wait for admin approval.</p>
+              </div>
+              <button type="button" class="btn secondary excel-btn" id="downloadWithdrawPageExcelBtn">📗 Excel</button>
+            </div>
+            <div class="stats-grid compact-stats">
+              <div class="stat"><div class="label">Available to Withdraw</div><div id="withdrawAvailablePage" class="value">₹0</div></div>
+            </div>
+            <div id="withdrawWindowPage" class="withdrawal-note"></div>
+            <div class="section-head-row">
+              <button type="button" class="btn primary" id="openWithdrawPageBtn">₹ Withdraw</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Gross Amount</th><th>Commission</th><th>Net Amount</th><th>Date</th><th>Status</th><th>Payment Proof</th></tr></thead>
+                <tbody id="withdrawPageBody"><tr><td colspan="5">No withdrawals yet.</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================
+             CASH BACK
+             =================================================== -->
+        <section id="section-cashback" class="page-section" hidden>
+          <div class="panel">
+            <div class="section-head-row">
+              <div>
+                <h2 class="section-title">Cash Back</h2>
+                <p class="section-subtitle">5% cash back is calculated separately for every verified deposit.</p>
+              </div>
+              <button type="button" class="btn secondary excel-btn" id="downloadCashbackExcelBtn">📗 Excel</button>
+            </div>
+            <div class="stats-grid compact-stats">
+              <div class="stat"><div class="label">Available Cash Back</div><div id="cashbackAvailable" class="value">₹0</div></div>
+            </div>
+            <div class="section-head-row">
+              <button type="button" class="btn primary" id="openCashbackWithdrawBtn">Withdraw Cash Back</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Deposit</th><th>Cash Back</th><th>Date</th></tr></thead>
+                <tbody id="cashbackBody"><tr><td colspan="3">No cash back yet.</td></tr></tbody>
+              </table>
+            </div>
+            <div style="margin-top:18px;">
+              <h3>Cash Back Withdrawals</h3>
+              <div class="table-wrap">
+                <table><thead><tr><th>Amount</th><th>Date</th><th>Time</th><th>Status</th><th>Proof</th></tr></thead>
+                <tbody id="cashbackWithdrawBody"><tr><td colspan="5">No requests yet.</td></tr></tbody></table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================
+             LEVEL INCOMES
+             =================================================== -->
+        <section id="section-level-incomes" class="page-section" hidden>
+          <div class="panel">
+            <div class="section-head-row">
+              <div>
+                <h2 class="section-title">Level Incomes</h2>
+                <p class="section-subtitle">Level Income is earned from your downline members’ Daily ROI: Normal: L1 10%, L2 10%, L3 7%, L4 5%, L5 3% · Silver: 10% · Gold: 12%. It is calculated only when a weekday ROI is credited.</p>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn secondary excel-btn" id="downloadLevelIncomeExcelBtn">📗 Level Excel</button><button type="button" class="btn secondary excel-btn" id="downloadRoiExcelBtn">📗 ROI Excel</button></div>
+            </div>
+            <div class="stats-grid compact-stats">
+              <div class="stat"><div class="label">Total Level Income Earned</div><div id="levelIncomeNext" class="value">₹0</div></div>
+              <div class="stat"><div class="label">Total Level Income Withdrawn</div><div id="levelIncomeWithdrawn" class="value">₹0</div></div>
+              <div class="stat"><div class="label">Available Level Income</div><div id="levelIncomeAvailable" class="value">₹0</div></div>
+            </div>
+            <div class="section-head-row">
+              <button type="button" class="btn primary" id="openLevelIncomeWithdrawBtn">Withdraw Level Income</button>
+            </div>
+            <div id="levelIncomeWindowPage" class="withdrawal-note">Level Income withdrawals are available Friday–Sunday, 4:30 PM–11:30 PM IST only.</div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Date</th><th>A Income</th><th>B Income</th><th>C Income</th><th>Daily Total</th></tr></thead>
+                <tbody id="levelIncomeBody"><tr><td colspan="5">No level income yet.</td></tr></tbody>
+              </table>
+            </div>
+            <div id="adminLevelLegacyDownlineSection" style="margin-top:22px;">
+              <h3>My Downline Members</h3>
+              <p class="section-subtitle">See how many members are under you, their current updated deposit, and the Level Income generated from each member.</p>
+              <div class="stats-grid compact-stats">
+                <div class="stat"><div class="label">Direct Downline</div><div id="levelDirectDownlineCount" class="value">0</div></div>
+                <div class="stat"><div class="label">Total Downline</div><div id="levelTotalDownlineCount" class="value">0</div></div>
+              </div>
+              <div class="direct-downline-card">
+                <div class="direct-downline-title">👥 My Direct Downline (Level 1)</div>
+                <div id="directDownlineList" class="direct-downline-list"><div class="direct-downline-empty">No direct downline members yet.</div></div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Level</th><th>User ID</th><th>Name</th><th>Joined Date</th><th>Updated Deposit</th><th>Level Income Generated</th></tr></thead>
+                  <tbody id="levelDownlineBody"><tr><td colspan="6">No downline members yet.</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+            <div style="margin-top:22px;">
+              <h3>Downline Level Income Details</h3>
+              <p class="section-subtitle">Each row shows the date, that member's ROI, applicable Level rate, and the Level Income generated for you.</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Date</th><th>Level</th><th>User ID</th><th>Name</th><th>Updated Deposit</th><th>Member ROI</th><th>Rate</th><th>Level Income</th></tr></thead>
+                  <tbody id="levelDownlineIncomeBody"><tr><td colspan="8">No downline Level Income yet.</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+            <div style="margin-top:18px;">
+              <h3>Level Income Withdrawals</h3>
+              <div class="table-wrap">
+                <table><thead><tr><th>Amount</th><th>Date</th><th>Time</th><th>Status</th><th>Payment Proof</th></tr></thead>
+                <tbody id="levelIncomeWithdrawBody"><tr><td colspan="5">No requests yet.</td></tr></tbody></table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="section-my-downlines" class="page-section" hidden>
+          <div class="panel downline-map-panel">
+            <div class="section-head-row">
+              <div>
+                <h2 class="section-title">My Downlines</h2>
+                <p class="section-subtitle">Click any investor to open or close their downline. The ₹ amount beside each member shows the Level Income you receive from that member.</p>
+              </div>
+            </div>
+            <div class="downline-map-legend">
+              <span><b>Level 1</b> = Direct Downline</span>
+              <span><b>Level 2–5</b> = Indirect Downline</span>
+              <span><b>₹ Commission</b> = Your Level Income from that member</span>
+            </div>
+            <div id="myDownlineMap" class="downline-map" aria-live="polite">
+              <div class="downline-empty">No downline members yet.</div>
+            </div>
+          </div>
+        </section>
+
+        <section id="section-rules" class="page-section" hidden>
+          <div class="panel"><div class="section-head-row"><div><h2 class="section-title">Investor Rules & Benefits</h2><p class="section-subtitle">SPARTNER rules, eligibility and benefits.</p></div></div><div id="rulesContent"></div></div>
+        </section>
+
+        <section id="section-roi-history" class="page-section" hidden>
+          <div class="panel"><div class="section-head-row"><div><h2 class="section-title">ROI History</h2><p class="section-subtitle">Daily compound ROI history. Weekends have no new ROI credit.</p></div><button type="button" class="btn secondary excel-btn" id="downloadRoiHistoryPageExcelBtn">📗 Excel</button></div>
+            <div class="stats-grid compact-stats roi-summary-grid"><div class="stat"><div class="label">Total ROI Earned</div><div id="roiTotalEarned" class="value">₹0</div></div><div class="stat"><div class="label">Current Balance</div><div id="roiCurrentBalance" class="value">₹0</div></div><div class="stat"><div class="label">Current ROI Rate</div><div id="roiCurrentRate" class="value">1%</div></div></div>
+            <div class="table-wrap"><table><thead><tr><th>Date</th><th>Opening Balance</th><th>ROI %</th><th>ROI Amount</th><th>Closing Balance</th></tr></thead><tbody id="roiHistoryBody"><tr><td colspan="5">No ROI history yet.</td></tr></tbody></table></div>
+          </div>
+        </section>
+
+        <section
+          id="section-bank"
+          class="page-section"
+          hidden
+        >
+
+          <div
+            id="bankAccountsGrid"
+          ></div>
+
+        </section>
+
+
+        <!-- ===================================================
+             TRANSACTIONS
+             =================================================== -->
+
+        <section
+          id="section-transactions"
+          class="page-section"
+          hidden
+        >
+
+          <div class="panel">
+
+            <div
+              style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:15px;
+                flex-wrap:wrap;
+                margin-bottom:18px;
+              "
+            >
+
+              <div>
+
+                <h2 class="section-title">
+                  Transactions
+                </h2>
+
+                <p class="section-subtitle">
+                  Deposit and withdrawal history.
+                </p>
+
+              </div>
+
+              <button type="button" class="btn secondary excel-btn" id="downloadTransactionsExcelBtn">📗 Excel</button>
+
+              <span
+                id="txCount"
+                class="muted"
+              >
+                0 records
+              </span>
+
+            </div>
+
+
+            <div class="table-wrap">
+
+              <table>
+
+                <thead>
+
+                  <tr>
+
+                    <th>
+                      Transaction ID
+                    </th>
+
+                    <th>
+                      Type
+                    </th>
+
+                    <th>
+                      Amount
+                    </th>
+
+                    <th>
+                      UTR
+                    </th>
+
+                    <th>
+                      Proof
+                    </th>
+
+                    <th>
+                      Status
+                    </th>
+
+                    <th>
+                      Date
+                    </th>
+
+                    <th
+                      id="actionHead"
+                      hidden
+                    >
+                      Action
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+                <tbody id="txBody">
+
+                  <tr>
+                    <td colspan="7">
+                      No transactions yet.
+                    </td>
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ===================================================
+             PROFILE PAGE
+             =================================================== -->
+
+        <section
+          id="section-profile"
+          class="page-section"
+          hidden
+        >
+
+          <div class="panel">
+
+            <h2 class="section-title">
+              Account Profile
+            </h2>
+
+            <p class="section-subtitle">
+              Complete your details. Future changes are sent to admin for approval.
+            </p>
+
+
+            <form id="profileForm">
+
+              <div class="profile-grid">
+
+                <div class="form-group">
+                  <label>
+                    User ID
+                  </label>
+
+                  <input
+                    id="profileUserId"
+                    type="text"
+                    readonly
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label>
+                    Name
+                  </label>
+
+                  <input
+                    id="profileName"
+                    type="text"
+                    readonly
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label>
+                    Email
+                  </label>
+
+                  <input
+                    id="profileEmail"
+                    type="email"
+                    readonly
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="profilePhone">
+                    Phone
+                  </label>
+
+                  <input
+                    id="profilePhone"
+                    type="text"
+                    placeholder="Phone number"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="profilePan">
+                    PAN
+                  </label>
+
+                  <input
+                    id="profilePan"
+                    type="text"
+                    maxlength="10"
+                    placeholder="PAN number"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="profileAadhaar">
+                    Aadhaar
+                  </label>
+
+                  <input
+                    id="profileAadhaar"
+                    type="text"
+                    maxlength="12"
+                    placeholder="Aadhaar number"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="profileAddress">
+                    Address
+                  </label>
+                  <input
+                    id="profileAddress"
+                    type="text"
+                    placeholder="Full address"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="profileCity">
+                    City
+                  </label>
+                  <input
+                    id="profileCity"
+                    type="text"
+                    placeholder="City"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="profileState">
+                    State
+                  </label>
+                  <input
+                    id="profileState"
+                    type="text"
+                    placeholder="State"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="profilePincode">
+                    Pincode
+                  </label>
+                  <input
+                    id="profilePincode"
+                    type="text"
+                    maxlength="6"
+                    placeholder="Pincode"
+                  >
+                </div>
+
+              </div>
+
+
+              <div id="profileMsg"></div>
+
+              <div class="password-change-card" style="margin-top:18px; padding:16px; border:1px solid rgba(0,0,0,.08); border-radius:14px;">
+                <h3 style="margin:0 0 8px;">Change Password</h3>
+                <p class="section-subtitle" style="margin-bottom:12px;">Change your login password anytime after signing in.</p>
+                <div class="profile-grid">
+                  <div class="form-group"><label for="currentPassword">Current Password</label><input id="currentPassword" type="password" autocomplete="current-password" placeholder="Current password"></div>
+                  <div class="form-group"><label for="newPassword">New Password</label><input id="newPassword" type="password" autocomplete="new-password" placeholder="New password"></div>
+                  <div class="form-group"><label for="confirmPassword">Confirm New Password</label><input id="confirmPassword" type="password" autocomplete="new-password" placeholder="Confirm new password"></div>
+                </div>
+                <div id="passwordChangeMsg"></div>
+                <button type="button" class="btn primary" id="changePasswordBtn">Change Password</button>
+              </div>
+
+
+              <div class="modal-actions">
+
+                <button
+                  type="submit"
+                  class="btn primary"
+                >
+                  Save Profile
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <!-- =========================================================
+       DEPOSIT MODAL
+       ========================================================= -->
+
+  <div
+    id="modal"
+    class="modal"
+    hidden
+  >
+
+    <div class="modal-card">
+
+      <div class="modal-head">
+
+        <div>
+
+          <h2>
+            Deposit Request
+          </h2>
+
+          <p>
+            Submit a deposit request for admin verification.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close"
+          id="closeModal"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <form id="depositForm">
+
+        <div class="form-group">
+
+          <label for="amount">
+            Amount (₹)
+          </label>
+
+          <input
+            type="number"
+            id="amount"
+            min="1"
+            step="1"
+            placeholder="Enter deposit amount"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="utrNumber">
+            UTR / Transaction Number
+          </label>
+
+          <input
+            type="text"
+            id="utrNumber"
+            maxlength="100"
+            placeholder="Enter UTR / transaction number"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Payment Screenshot
+          </label>
+
+          <div class="upload-box">
+
+            <input
+              type="file"
+              id="paymentScreenshot"
+              accept="image/jpeg,image/png,image/webp"
+              required
+            >
+
+            <div id="fileName"></div>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="depositMsg"
+          class="message"
+        ></div>
+
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="btn"
+            id="closeDepositBtn"
+            onclick="document.getElementById('closeModal').click()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="btn primary"
+          >
+            Submit Deposit Request
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================================
+       WITHDRAWAL MODAL
+       IMPORTANT:
+       PAYMENT PROOF MODAL IS NOT INSIDE THIS FORM.
+       ========================================================= -->
+
+  <div
+    id="withdrawalModal"
+    class="modal"
+    hidden
+  >
+
+    <div class="modal-card">
+
+      <div class="modal-head">
+
+        <div>
+
+          <h2>
+            Withdrawal Request
+          </h2>
+
+          <p>
+            Submit a withdrawal request for admin verification.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close"
+          id="closeWithdrawalModal"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <!-- =====================================================
+           WITHDRAWAL FORM
+           ===================================================== -->
+
+      <form id="withdrawalForm">
+
+        <!-- AMOUNT -->
+
+        <div class="form-group">
+
+          <label for="withdrawalAmount">
+            Amount (₹)
+          </label>
+
+          <input
+            type="number"
+            id="withdrawalAmount"
+            name="amount"
+            min="1"
+            step="1"
+            placeholder="Enter withdrawal amount"
+            required
+          >
+
+        </div>
+
+
+        <!-- BANK ACCOUNT -->
+
+        <div class="form-group">
+
+          <label
+            for="withdrawalBankAccount"
+          >
+            Withdrawal Bank Account
+          </label>
+
+          <select
+            id="withdrawalBankAccount"
+            name="withdrawalBankAccount"
+            required
+          >
+
+            <option value="">
+              Loading bank accounts...
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- SELECTED BANK DETAILS -->
+
+        <div
+          id="withdrawalBankInfo"
+          class="withdrawal-bank-info"
+          hidden
+        >
+
+          <div
+            id="withdrawalBankName"
+            class="bank-name"
+          ></div>
+
+          <p>
+            <strong>
+              Account Holder:
+            </strong>
+
+            <span id="withdrawalAccountHolder">
+              —
+            </span>
+          </p>
+
+          <p>
+            <strong>
+              Account Number:
+            </strong>
+
+            <span id="withdrawalAccountNumber">
+              —
+            </span>
+          </p>
+
+          <p>
+            <strong>
+              IFSC:
+            </strong>
+
+            <span id="withdrawalIfsc">
+              —
+            </span>
+          </p>
+
+        </div>
+
+
+        <div class="withdrawal-note">
+
+          Withdrawal requests are submitted as
+          <strong>PENDING</strong>
+          and require admin verification.
+
+        </div>
+
+
+        <div
+          id="withdrawalMsg"
+          class="message"
+        ></div>
+
+
+        <!-- ===================================================
+             THIS IS THE IMPORTANT SUBMIT BUTTON
+             =================================================== -->
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="btn"
+            onclick="document.getElementById('closeWithdrawalModal').click()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="btn primary"
+          >
+            Submit Withdrawal Request
+          </button>
+
+        </div>
+
+      </form>
+
+      <!-- =====================================================
+           WITHDRAWAL FORM ENDS HERE
+           ===================================================== -->
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================================
+       PAYMENT PROOF MODAL
+       IMPORTANT:
+       OUTSIDE withdrawalForm
+       ========================================================= -->
+
+  <div
+    id="proofModal"
+    class="modal"
+    hidden
+  >
+
+    <div class="modal-card proof-card">
+
+      <div class="modal-head">
+
+        <div>
+
+          <h2>
+            Payment Proof
+          </h2>
+
+          <p id="proofUtr">
+            Payment Screenshot
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="close"
+          id="closeProofModal"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="proof-image-wrap">
+
+        <img
+          id="proofImage"
+          src=""
+          alt="Payment Screenshot"
+        >
+
+      </div>
+
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          id="openProofNewTab"
+          class="btn secondary"
+        >
+          Open Full Size
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================================
+       APP JS
+       ========================================================= -->
+
+  <script src="/xlsx.full.min.js"></script>
+  <script src="/app.js"></script>
+
+
+  <!-- =========================================================
+       WITHDRAWAL BANK INFO DISPLAY
+       This only displays the selected saved bank details.
+       Saving/submitting remains handled by app.js.
+       ========================================================= -->
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      const select =
+        document.getElementById(
+          "withdrawalBankAccount"
+        );
+
+      const info =
+        document.getElementById(
+          "withdrawalBankInfo"
+        );
+
+      const bankName =
+        document.getElementById(
+          "withdrawalBankName"
+        );
+
+      const holder =
+        document.getElementById(
+          "withdrawalAccountHolder"
+        );
+
+      const accountNumber =
+        document.getElementById(
+          "withdrawalAccountNumber"
+        );
+
+      const ifsc =
+        document.getElementById(
+          "withdrawalIfsc"
+        );
+
+
+      function updateWithdrawalBankInfo() {
+
+        if (!select) return;
+
+        const option =
+          select.selectedOptions &&
+          select.selectedOptions[0];
+
+        if (
+          !option ||
+          !option.value
+        ) {
+
+          if (info) {
+            info.hidden = true;
+          }
+
+          return;
+        }
+
+
+        const selectedBank =
+          option.dataset.bankName || "";
+
+        const selectedHolder =
+          option.dataset.accountHolderName || "";
+
+        const selectedAccount =
+          option.dataset.accountNumber || "";
+
+        const selectedIfsc =
+          option.dataset.ifsc || "";
+
+
+        if (bankName) {
+          bankName.textContent =
+            selectedBank || "Bank Account";
+        }
+
+        if (holder) {
+          holder.textContent =
+            selectedHolder || "—";
+        }
+
+        if (accountNumber) {
+
+          const value =
+            selectedAccount.replace(/\s/g, "");
+
+          accountNumber.textContent =
+            value.length > 4
+              ? "•".repeat(
+                  Math.max(
+                    4,
+                    value.length - 4
+                  )
+                ) +
+                value.slice(-4)
+              : value || "—";
+        }
+
+        if (ifsc) {
+          ifsc.textContent =
+            selectedIfsc || "—";
+        }
+
+        if (info) {
+          info.hidden = false;
+        }
+      }
+
+
+      if (select) {
+
+        select.addEventListener(
+          "change",
+          updateWithdrawalBankInfo
+        );
+
+        const observer =
+          new MutationObserver(
+            () => {
+              updateWithdrawalBankInfo();
+            }
+          );
+
+        observer.observe(
+          select,
+          {
+            childList: true
+          }
+        );
+
+      }
+
+    });
+  </script>
+
+</body>
+</html>
