@@ -1,0 +1,11 @@
+[
+  {
+    "id": "ADM001",
+    "name": "SPARTNER Admin",
+    "email": "sampadhapartners@gmail.com",
+    "passwordHash": "3bf38c8b3db3bd629643e9a9ae38a7ad28124b36e6e1722ed5675608cc2703cf",
+    "role": "admin",
+    "totalInvestment": 0,
+    "currentBalance": 0
+  }
+]
