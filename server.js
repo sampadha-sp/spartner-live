@@ -5,7 +5,9 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { sendTelegramMessage } from './telegram.js';
-import nodemailer from "nodemailer"
+import nodemailer from "nodemailer";
+import pg from 'pg';
+const { Pool } = pg;
 
 const mailTransporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -40,6 +42,86 @@ const UPLOADS =
     __dirname,
     'uploads'
   );
+
+// =====================================================
+// PERSISTENT DATABASE STORE
+// =====================================================
+// Render's local filesystem is ephemeral. When DATABASE_URL is
+// configured, keep the existing JSON-shaped application data in
+// PostgreSQL so the rest of the app can continue using readJson/writeJson.
+const dbPool = process.env.DATABASE_URL
+  ? new Pool({ connectionString: process.env.DATABASE_URL, max: 5 })
+  : null;
+
+const dbWriteQueues = new Map();
+
+async function initPersistentStore() {
+  if (!dbPool) {
+    console.log('Persistent store: JSON filesystem (DATABASE_URL not set)');
+    return;
+  }
+
+  await dbPool.query(`
+    CREATE TABLE IF NOT EXISTS json_store (
+      name TEXT PRIMARY KEY,
+      data JSONB NOT NULL,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+
+  const result = await dbPool.query('SELECT name, data FROM json_store');
+  const stored = new Map(result.rows.map(row => [row.name, row.data]));
+
+  for (const file of requiredFiles) {
+    const name = file;
+    if (stored.has(name)) {
+      fs.writeFileSync(
+        path.join(DATA, name),
+        JSON.stringify(stored.get(name), null, 2),
+        'utf8'
+      );
+      continue;
+    }
+
+    const local = readJsonFileOnly(name);
+    await dbPool.query(
+      `INSERT INTO json_store (name, data, updated_at)
+       VALUES ($1, $2::jsonb, NOW())
+       ON CONFLICT (name) DO NOTHING`,
+      [name, JSON.stringify(local)]
+    );
+  }
+
+  console.log('Persistent store: PostgreSQL ENABLED');
+}
+
+function readJsonFileOnly(name) {
+  const file = path.join(DATA, name);
+  if (!fs.existsSync(file)) return [];
+  try {
+    const data = fs.readFileSync(file, 'utf8');
+    return data.trim() ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error(`JSON READ ERROR: ${name}`, error);
+    return [];
+  }
+}
+
+function queueDatabaseWrite(name, value) {
+  if (!dbPool) return;
+  const previous = dbWriteQueues.get(name) || Promise.resolve();
+  const next = previous
+    .catch(() => {})
+    .then(() => dbPool.query(
+      `INSERT INTO json_store (name, data, updated_at)
+       VALUES ($1, $2::jsonb, NOW())
+       ON CONFLICT (name) DO UPDATE
+       SET data = EXCLUDED.data, updated_at = NOW()`,
+      [name, JSON.stringify(value)]
+    ))
+    .catch(error => console.error(`DATABASE WRITE ERROR: ${name}`, error));
+  dbWriteQueues.set(name, next);
+}
 
 // =====================================================
 // CREATE REQUIRED FOLDERS
@@ -103,40 +185,7 @@ const impersonationSessions = new Map();
 // =====================================================
 
 function readJson(name) {
-
-  const file =
-    path.join(
-      DATA,
-      name
-    );
-
-  if (!fs.existsSync(file)) {
-    return [];
-  }
-
-  try {
-
-    const data =
-      fs.readFileSync(
-        file,
-        'utf8'
-      );
-
-    if (!data.trim()) {
-      return [];
-    }
-
-    return JSON.parse(data);
-
-  } catch (error) {
-
-    console.error(
-      `JSON READ ERROR: ${name}`,
-      error
-    );
-
-    return [];
-  }
+  return readJsonFileOnly(name);
 }
 
 function writeJson(
@@ -156,6 +205,8 @@ function writeJson(
     ),
     'utf8'
   );
+
+  queueDatabaseWrite(name, value);
 }
 
 // =====================================================
@@ -1181,6 +1232,11 @@ const passwordResetCodes = new Map();
        
 
 // =====================================================
+// INITIALIZE PERSISTENT STORE BEFORE SERVING REQUESTS
+// =====================================================
+await initPersistentStore();
+
+// =====================================================
 // SERVER
 // =====================================================
 
@@ -1192,47 +1248,6 @@ const server =
     ) => {
 
     try {
-
-                // ======================================================
-                // SERVE FRONTEND (SINGLE APP DEPLOYMENT)
-                // ======================================================
-                // The SPARTNER app is deployed as one Render Web Service.
-                // Serve files from /public and fall back to index.html for SPA routes.
-                if (req.method === 'GET' && !req.url.startsWith('/api/')) {
-                  const requestedPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-                  const publicRoot = path.join(__dirname, 'public');
-                  const relativePath = requestedPath === '/' ? 'index.html' : requestedPath.replace(/^\/+/, '');
-                  const safePath = path.normalize(relativePath);
-                  const candidate = path.join(publicRoot, safePath);
-                  const isInsidePublic = candidate === publicRoot || candidate.startsWith(publicRoot + path.sep);
-                  const filePath = isInsidePublic && fs.existsSync(candidate) && fs.statSync(candidate).isFile()
-                    ? candidate
-                    : path.join(publicRoot, 'index.html');
-
-                  const ext = path.extname(filePath).toLowerCase();
-                  const contentTypes = {
-                    '.html': 'text/html; charset=utf-8',
-                    '.js': 'application/javascript; charset=utf-8',
-                    '.css': 'text/css; charset=utf-8',
-                    '.json': 'application/json; charset=utf-8',
-                    '.png': 'image/png',
-                    '.jpg': 'image/jpeg',
-                    '.jpeg': 'image/jpeg',
-                    '.svg': 'image/svg+xml',
-                    '.ico': 'image/x-icon',
-                    '.webp': 'image/webp',
-                    '.woff': 'font/woff',
-                    '.woff2': 'font/woff2'
-                  };
-
-                  const body = fs.readFileSync(filePath);
-                  res.writeHead(200, {
-                    'Content-Type': contentTypes[ext] || 'application/octet-stream',
-                    'Cache-Control': 'no-cache'
-                  });
-                  res.end(body);
-                  return;
-                }
 
                 // ======================================================
                 // ADMIN RETURN FROM INVESTOR IMPERSONATION (TOP-LEVEL)
